@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'second.dart';
 
 void main() => runApp(DemoApp());
 
 class DemoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(home: DemoPage());
+    return new MaterialApp(
+      home: DemoPage(),
+      routes: {
+        "/second": (context) {
+          return new SecondPage();
+        },
+        "/main": (context) {
+          return new DemoPage();
+        }
+      },
+    );
   }
 }
 
@@ -57,8 +68,11 @@ class _DemoItemState extends State<DemoItem> {
                   msg: "点击了：" + index.toString(),
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
-                  timeInSecForIos: 1,
                 );
+//                Navigator.push(context, MaterialPageRoute(builder: (context) {
+//                  return new SecondPage();
+//                }));
+                Navigator.of(context).pushNamed("/second", arguments: index);
               },
               child: new Padding(
                 padding: new EdgeInsets.only(
