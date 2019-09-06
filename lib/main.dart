@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'second.dart';
+import 'list.dart';
+import 'net.dart';
+import 'listitem.dart';
 
 void main() => runApp(DemoApp());
 
@@ -8,127 +9,75 @@ class DemoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      home: DemoPage(),
+      home: RoutePage(),
       routes: {
-        "/second": (context) {
-          return new SecondPage();
+        "/route": (context) {
+          return new RoutePage();
         },
-        "/main": (context) {
-          return new DemoPage();
-        }
+        "/list": (context) {
+          return new ListPage();
+        },
+        "/listItem": (context) {
+          return new ListItemPage();
+        },
+        "/net": (context) {
+          return new NetPage();
+        },
       },
     );
   }
 }
 
-class DemoPage extends StatefulWidget {
+/**
+ * 这个页面是为了路由
+ *
+ * 1.组件路由：在main中用Navigator.push(context, MaterialPageRoute(builder: (context) {})
+ * 2.命名路由：Navigator.of(context).pushNamed("/second");
+ */
+class RoutePage extends StatefulWidget {
   @override
-  _DemoPageState createState() => _DemoPageState();
+  _RoutePageState createState() => _RoutePageState();
 }
 
-class _DemoPageState extends State<DemoPage> {
+class _RoutePageState extends State<RoutePage> {
   @override
   Widget build(BuildContext context) {
+    int sizeNum = 30;
     return new Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: Colors.white,
       appBar: new AppBar(
-        title: new Text("demo学习"),
+        title: new Text("Flutter学习"),
       ),
-      body: new ListView.builder(
-        itemBuilder: (context, index) {
-          return new DemoItem(index);
-        },
-        itemCount: 20,
-      ),
-    );
-  }
-}
-
-class DemoItem extends StatefulWidget {
-  var index;
-
-  DemoItem(this.index);
-
-  @override
-  _DemoItemState createState() => _DemoItemState(index);
-}
-
-class _DemoItemState extends State<DemoItem> {
-  var index;
-
-  _DemoItemState(this.index);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: new Card(
-          child: new FlatButton(
-              onPressed: () {
-                Fluttertoast.showToast(
-                  msg: "点击了：" + index.toString(),
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                );
-//                Navigator.push(context, MaterialPageRoute(builder: (context) {
-//                  return new SecondPage();
-//                }));
-                Navigator.of(context).pushNamed("/second", arguments: index);
-              },
-              child: new Padding(
-                padding: new EdgeInsets.only(
-                    left: 10, top: 10, right: 10, bottom: 10),
-                child: new Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    new Container(
-                      child: new Text(
-                        "这是一条描述-" + index.toString(),
-                        style: TextStyle(color: Colors.black, fontSize: 14.0),
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      margin: new EdgeInsets.only(top: 6.0, bottom: 2.0),
-                      alignment: Alignment.topLeft,
-                    ),
-                    new Padding(
-                        padding: new EdgeInsets.only(top: 5, bottom: 5)),
-                    new Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        _getBottomItem(Icons.star, "星星"),
-                        _getBottomItem(Icons.link, "链接"),
-                        _getBottomItem(Icons.subject, "其他")
-                      ],
-                    )
-                  ],
-                ),
-              ))),
-    );
-  }
-}
-
-_getBottomItem(IconData icon, String text) {
-  return new Expanded(
-    flex: 1,
-    child: new Center(
-      child: new Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      body: new Column(
         mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          new Icon(
-            icon,
-            size: 16,
-            color: Colors.blue,
-          ),
-          new Padding(padding: new EdgeInsets.only(left: 5.0)),
-          new Text(
-            text,
-            style: TextStyle(color: Colors.grey, fontSize: 14.0),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-          )
+          new FlatButton(
+              onPressed: () {
+                // 这是跳转的第一种方法
+                Navigator.pushNamed(context, "/list", arguments: sizeNum);
+              },
+              child: _getClickText("ListViewDemo")),
+          new Padding(padding: EdgeInsets.all(10)),
+          new FlatButton(
+              onPressed: () {
+                // 这是跳转的第二种方法
+//                Navigator.push(context,
+//                    new MaterialPageRoute(builder: (context) {
+//                  new NetPage();
+//                }));
+                Navigator.pushNamed(context, "/net");
+              },
+              child: _getClickText("网络请求Demo"))
         ],
       ),
-    ),
-  );
+    );
+  }
+}
+
+_getClickText(String textStr) {
+  return new Center(
+      child: new Text(textStr,
+          style: TextStyle(
+              color: Colors.black, fontSize: 16, backgroundColor: Colors.red)));
 }
