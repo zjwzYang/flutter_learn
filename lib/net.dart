@@ -4,6 +4,8 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
+import 'bean/newsseri.dart';
+import 'bean/newsdetailseri.dart';
 
 class NetPage extends StatefulWidget {
   @override
@@ -100,7 +102,7 @@ _httpDio() async {
   Dio dio = new Dio();
   Response response = await dio.get(url);
   String data = response.data.toString();
-  print(data);
+  _fromatToJsonBean(data);
 }
 
 _formatToMap(String data) {
@@ -119,6 +121,16 @@ _formatToBean(String data) {
   News news = News.fromatJson(json.decode(data));
   print("12345678:" + news.msg);
   return news;
+}
+
+/**
+ * 比较推荐这种发法
+ */
+_fromatToJsonBean(String data) {
+  NewsSeri newsSeri = new NewsSeri.fromJson(json.decode(data));
+  newsSeri.result.list.forEach((NewsDetailSeri newsDetail) {
+    print("12345678:" + newsDetail.title);
+  });
 }
 
 class News {
