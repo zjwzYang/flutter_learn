@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'bean/newsseri.dart';
 import 'bean/newsdetailseri.dart';
+import 'newslist.dart';
 
 class NetPage extends StatefulWidget {
   @override
@@ -56,7 +57,7 @@ class _NetPageState extends State<NetPage> {
                 onPressed: () {
                   Fluttertoast.showToast(
                       msg: "第三方网络请求", toastLength: Toast.LENGTH_SHORT);
-                  _httpDio();
+                  _httpDio(context);
                 },
                 child: new Padding(
                   padding: EdgeInsets.only(top: 15, bottom: 15),
@@ -98,11 +99,11 @@ _httpHttp() async {
   });
 }
 
-_httpDio() async {
+_httpDio(BuildContext context) async {
   Dio dio = new Dio();
   Response response = await dio.get(url);
   String data = response.data.toString();
-  _fromatToJsonBean(data);
+  _fromatToJsonBean(context, data);
 }
 
 _formatToMap(String data) {
@@ -126,11 +127,14 @@ _formatToBean(String data) {
 /**
  * 比较推荐这种发法
  */
-_fromatToJsonBean(String data) {
+_fromatToJsonBean(BuildContext context, String data) {
   NewsSeri newsSeri = new NewsSeri.fromJson(json.decode(data));
-  newsSeri.result.list.forEach((NewsDetailSeri newsDetail) {
-    print("12345678:" + newsDetail.title);
-  });
+  Navigator.push(context, new MaterialPageRoute(builder: (context) {
+    return new NewsListPage(
+      dataList: newsSeri.result.list,
+      channel: newsSeri.result.channel,
+    );
+  }));
 }
 
 class News {
