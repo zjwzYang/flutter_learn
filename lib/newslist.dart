@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'bean/newsdetailseri.dart';
+import 'bean/newsseri.dart';
 import 'webview.dart';
+import 'package:dio/dio.dart';
+import 'dart:convert';
 
 class NewsListPage extends StatefulWidget {
   List<NewsDetailSeri> dataList;
@@ -16,6 +19,9 @@ class NewsListPage extends StatefulWidget {
 class _NewsListPageState extends State<NewsListPage> {
   List<NewsDetailSeri> dataList;
   String channel;
+  var start = 0;
+
+  ScrollController scrollController;
 
   _NewsListPageState({this.dataList, this.channel});
 
@@ -23,6 +29,13 @@ class _NewsListPageState extends State<NewsListPage> {
   void initState() {
     super.initState();
     getData();
+    scrollController = new ScrollController();
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        _synGetMore();
+      }
+    });
   }
 
   @override
@@ -32,11 +45,15 @@ class _NewsListPageState extends State<NewsListPage> {
         title: new Text(channel),
       ),
       backgroundColor: Colors.grey,
-      body: new ListView.builder(
-        itemBuilder: (context, index) {
-          return _getNewsListItem(context, dataList[index]);
-        },
-        itemCount: dataList.length,
+      body: RefreshIndicator(
+        child: new ListView.builder(
+          itemBuilder: (context, index) {
+            return _getNewsListItem(context, dataList[index]);
+          },
+          itemCount: dataList.length,
+          controller: scrollController,
+        ),
+        onRefresh: _synHttpData,
       ),
     );
   }
@@ -47,9 +64,41 @@ class _NewsListPageState extends State<NewsListPage> {
           20, (i) => new NewsDetailSeri(i.toString(), "", "", "", ""));
     } else {
       dataList.forEach((NewsDetailSeri newsDetail) {
-        print("12345678:" + newsDetail.title);
+        // print("12345678:" + newsDetail.title);
       });
     }
+  }
+
+  Future<Null> _synHttpData() async {
+    start = 0;
+    var url = "https://api.jisuapi.com/news/get?channel=头条&start=" +
+        start.toString() +
+        "&num=10&appkey=695f0de3bc40b627";
+    Dio dio = new Dio();
+    Response response = await dio.get(url);
+    NewsSeri newsSeri =
+        NewsSeri.fromJson(json.decode(response.data.toString()));
+    setState(() {
+      dataList = newsSeri.result.list;
+      dataList.forEach((NewsDetailSeri newsDetail) {
+        print("刷新成功:" + newsDetail.title);
+      });
+    });
+  }
+
+  _synGetMore() async {
+    start++;
+    var url = "https://api.jisuapi.com/news/get?channel=头条&start=" +
+        start.toString() +
+        "&num=10&appkey=695f0de3bc40b627";
+    Dio dio = new Dio();
+    Response response = await dio.get(url);
+    NewsSeri newsSeri =
+        NewsSeri.fromJson(json.decode(response.data.toString()));
+    setState(() {
+      dataList.addAll(newsSeri.result.list);
+      print("加载成功:");
+    });
   }
 }
 

@@ -55,8 +55,6 @@ class _NetPageState extends State<NetPage> {
               child: new Card(
             child: new FlatButton(
                 onPressed: () {
-                  Fluttertoast.showToast(
-                      msg: "第三方网络请求", toastLength: Toast.LENGTH_SHORT);
                   _httpDio(context);
                 },
                 child: new Padding(
@@ -103,7 +101,12 @@ _httpDio(BuildContext context) async {
   Dio dio = new Dio();
   Response response = await dio.get(url);
   String data = response.data.toString();
-  _fromatToJsonBean(context, data);
+  Map<String, dynamic> map = json.decode(data);
+  if (map["status"] != "ok") {
+    Fluttertoast.showToast(msg: map["msg"], toastLength: Toast.LENGTH_SHORT);
+  } else {
+    _fromatToJsonBean(context, data);
+  }
 }
 
 _formatToMap(String data) {
