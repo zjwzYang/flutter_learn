@@ -102,7 +102,7 @@ _httpDio(BuildContext context) async {
   Response response = await dio.get(url);
   String data = response.data.toString();
   Map<String, dynamic> map = json.decode(data);
-  if (map["status"] != "ok") {
+  if (map["status"] != 0) {
     Fluttertoast.showToast(msg: map["msg"], toastLength: Toast.LENGTH_SHORT);
   } else {
     _fromatToJsonBean(context, data);

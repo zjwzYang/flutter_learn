@@ -4,6 +4,7 @@ import 'bean/newsseri.dart';
 import 'webview.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class NewsListPage extends StatefulWidget {
   List<NewsDetailSeri> dataList;
@@ -78,12 +79,17 @@ class _NewsListPageState extends State<NewsListPage> {
     Response response = await dio.get(url);
     NewsSeri newsSeri =
         NewsSeri.fromJson(json.decode(response.data.toString()));
-    setState(() {
-      dataList = newsSeri.result.list;
-      dataList.forEach((NewsDetailSeri newsDetail) {
-        print("刷新成功:" + newsDetail.title);
+    if (newsSeri.status != 0) {
+      Fluttertoast.showToast(
+          msg: newsSeri.msg, toastLength: Toast.LENGTH_SHORT);
+    } else {
+      setState(() {
+        dataList = newsSeri.result.list;
+        dataList.forEach((NewsDetailSeri newsDetail) {
+          print("刷新成功:" + newsDetail.title);
+        });
       });
-    });
+    }
   }
 
   _synGetMore() async {
@@ -114,7 +120,7 @@ _getNewsListItem(BuildContext context, NewsDetailSeri newsDetail) {
     child: new Padding(
       padding: EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 5),
       child: new Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
