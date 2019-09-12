@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'list.dart';
 import 'net.dart';
 import 'listitem.dart';
+import 'tabbar.dart';
 
 void main() => runApp(DemoApp());
 
@@ -22,6 +23,9 @@ class DemoApp extends StatelessWidget {
         },
         "/net": (context) {
           return new NetPage();
+        },
+        "/tabbar":(context) {
+          return new TabPage();
         },
       },
     );
@@ -58,7 +62,6 @@ class _RoutePageState extends State<RoutePage> {
                 Navigator.pushNamed(context, "/list", arguments: sizeNum);
               },
               child: _getClickText("ListViewDemo")),
-          new Padding(padding: EdgeInsets.all(10)),
           new FlatButton(
               onPressed: () {
                 // 这是跳转的第二种方法
@@ -68,7 +71,12 @@ class _RoutePageState extends State<RoutePage> {
 //                }));
                 Navigator.pushNamed(context, "/net");
               },
-              child: _getClickText("网络请求Demo"))
+              child: _getClickText("网络请求Demo")),
+          new FlatButton(
+              onPressed: () {
+                Navigator.pushNamed(context, "/tabbar");
+              },
+              child: _getClickText("TabbarDemo")),
         ],
       ),
     );

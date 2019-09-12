@@ -40,6 +40,12 @@ class _NewsListPageState extends State<NewsListPage> {
   }
 
   @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
@@ -86,7 +92,7 @@ class _NewsListPageState extends State<NewsListPage> {
       setState(() {
         dataList = newsSeri.result.list;
         dataList.forEach((NewsDetailSeri newsDetail) {
-          print("刷新成功:" + newsDetail.title);
+          print("刷新成功:" + newsDetail.pic);
         });
       });
     }
